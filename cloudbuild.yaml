@@ -1,0 +1,25 @@
+steps:
+    - name: 'python'
+      id: 'pip'
+      entrypoint: 'python'
+      args: ['-m', 'pip', 'install', '--upgrade', 'pip']
+    - name: python
+      id: 'package'
+      entrypoint: python
+      args: ['-m', 'pip', 'install', '.', '--user']
+    - name: python
+      id: 'pytest'
+      entrypoint: python
+      args: ['-m', 'pip', 'install', 'pytest', '--user']
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      id: 'clone repo'
+      args: ['gcloud', 'source', 'repos', 'clone', 'promptstore', '--project=boris001']
+    - name: 'python'
+      id: 'tests'
+      entrypoint: 'python'
+      args: ['-m', 'pytest', '--junitxml=${SHORT_SHA}_test_log.xml']
+artifacts:
+  objects:
+    location: 'gs://btvaroska-main/promptgit/logs'
+    paths:
+      - '${SHORT_SHA}_test_log.xml'
