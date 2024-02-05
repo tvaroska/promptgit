@@ -6,11 +6,12 @@ from dulwich.errors import NotGitRepository
 from .prompt import PARSERS, FileTypes, Prompt, PromptLocation
 
 class PromptRepo:
-    def __init__(self, path, history=10, parsers=PARSERS, name_inference = PromptLocation.from_dir, overide = False):
+    def __init__(self, path, history=10, parsers=PARSERS, name_inference = PromptLocation.from_dir, overide = False, raise_exception = True):
         self.home = Path(path)
         self.parsers = parsers
         self.name_inference = name_inference
         self.overide = overide
+        self.raise_exception = raise_exception
 
         try:
             self.repo = DRepo(path)
@@ -40,7 +41,10 @@ class PromptRepo:
         if location in self.prompts:
             return str(self.prompts[location])
         else:
-            return None
+            if self.raise_exception:
+                raise KeyError(f'Prompt {location} does not exists')
+            else:
+                return None
 
     def parse_file(self, f: Path):
         content = f.read_text()
