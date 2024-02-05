@@ -6,7 +6,7 @@ from promptgit.prompt import PromptLocation
         ['filename', 'application', 'name'],
         [
             # Simple test
-            ('/home/promptstore/test/first.txt', 'test', 'first'),
+            ('/workspace/promptstore/test/first.txt', 'test', 'first'),
             # Only name
             ('test.md', None, 'test')
         ])
