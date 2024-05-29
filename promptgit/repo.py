@@ -1,3 +1,9 @@
+"""
+
+    Representation of repository or subdirectory in repository as prompt storage
+
+"""
+
 from pathlib import Path
 
 from dulwich.repo import Repo as DRepo
@@ -5,10 +11,23 @@ from dulwich.errors import NotGitRepository
 
 from .prompt import PARSERS, FileTypes, Prompt, PromptLocation
 
-GIT_START = ['git', 'https', 'http']
+GIT_START = ["git", "https", "http"]
+
 
 class PromptRepo:
-    def __init__(self, path, history=10, parsers=PARSERS, name_inference = PromptLocation.from_dir, overide = False, raise_exception = True):
+    """
+    Prompt repository
+    """
+
+    def __init__(
+        self,
+        path,
+        history=10,
+        parsers=PARSERS,
+        name_inference=PromptLocation.from_dir,
+        overide=False,
+        raise_exception=True,
+    ):
         self.home = Path(path)
         self.parsers = parsers
         self.name_inference = name_inference
@@ -38,9 +57,16 @@ class PromptRepo:
             prompt = self.parse_file(f)
             location = name_inference(f.relative_to(self.home))
 
-            # Overide only if prompt.application is None or overide is True, otherwise keep
-            prompt.application = location.application if not prompt.application or overide else prompt.application
-            prompt.name = location.name if not prompt.name or overide else prompt.name
+            # Overide only if prompt.application is None or overide is True
+            # ,otherwise keep
+            prompt.application = (
+                location.application
+                if not prompt.application or overide
+                else prompt.application
+            )
+            prompt.name = (
+                location.name if not prompt.name or overide else prompt.name
+            )
             self.file_names[str(f.relative_to(self.home))] = prompt
             self.prompts[str(prompt.location)] = prompt
 
@@ -49,7 +75,7 @@ class PromptRepo:
             return str(self.prompts[location])
         else:
             if self.raise_exception:
-                raise KeyError(f'Prompt {location} does not exists')
+                raise KeyError(f"Prompt {location} does not exists")
             else:
                 return None
 
@@ -57,14 +83,16 @@ class PromptRepo:
         if not self.repo:
             return None
         last_commit = self.commits[0]
-        changed_files = [change.new.path for change in last_commit.changes() if change.type != 'delete']
+        changed_files = [
+            change.new.path
+            for change in last_commit.changes()
+            if change.type != "delete"
+        ]
 
         changed_prompts = [self.file_names[f.decode()] for f in changed_files]
 
         return changed_prompts
 
-
-        
     def parse_file(self, f: Path):
         content = f.read_text()
         try:

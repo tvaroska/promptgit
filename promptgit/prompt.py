@@ -3,10 +3,10 @@
     Core prompt object
 
 """
+
 import json
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Union, NamedTuple
-
+from typing import Callable, Dict, List, Optional, Union, NamedTuple, MappingProxyType
 from pathlib import Path
 from pydantic import BaseModel, field_validator
 
@@ -19,10 +19,21 @@ class FileTypes(str, Enum):
     TXT = "txt"
     MARKDOWN = "md"
     JSON = "json"
+    # TODO
+    # YAML = "yaml"
 
-MULTI_LINE = ['prmpt', 'description']
+
+
+
+MULTI_LINE = ["prmpt", "description"]
+
 
 class PromptLocation(NamedTuple):
+    """
+    'Location' of a prompt
+    application/prompt name
+    """
+
     application: str
     name: str
 
@@ -31,13 +42,12 @@ class PromptLocation(NamedTuple):
         p = Path(path)
 
         return cls(
-            application = p.parts[-2] if len(p.parts)>1 else None,
-            name = p.stem
+            application=p.parts[-2] if len(p.parts) > 1 else None, name=p.stem
         )
 
     @classmethod
     def from_str(cls, location):
-        splits = location.split('/')
+        splits = location.split("/")
         if len(splits) == 1:
             application = None
             name = location
@@ -49,12 +59,11 @@ class PromptLocation(NamedTuple):
 
         return cls(application=application, name=name)
 
-
     def __str__(self):
         if self.application:
-            return f'{self.application}/{self.name}'
+            return f"{self.application}/{self.name}"
         else:
-            return f'{self.name}'
+            return f"{self.name}"
 
 
 def parse_txt(text) -> Dict:
@@ -85,7 +94,13 @@ def parse_md(text: str) -> Dict:
         return data
 
     def standardize_sections(key: str) -> str:
-        return key.replace("#", "").strip().lower().replace(" ", "_").replace("-", "_")
+        return (
+            key.replace("#", "")
+            .strip()
+            .lower()
+            .replace(" ", "_")
+            .replace("-", "_")
+        )
 
     for line in text.splitlines():
         if line.strip() == "":
@@ -107,11 +122,12 @@ def parse_md(text: str) -> Dict:
     return content
 
 
-PARSERS = {
+PARSERS = MappingProxyType({
     FileTypes.TXT: parse_txt,
     FileTypes.JSON: parse_json,
     FileTypes.MARKDOWN: parse_md,
-}
+})
+
 
 class Prompt(BaseModel):
     """Core prompt object
@@ -151,12 +167,7 @@ class Prompt(BaseModel):
 
     def __str__(self):
         return self.prompt
-    
 
     @property
     def location(self):
-        return PromptLocation(
-            application=self.application,
-            name = self.name
-        )
-    
+        return PromptLocation(application=self.application, name=self.name)
