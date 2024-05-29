@@ -6,7 +6,8 @@
 
 import json
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Union, NamedTuple, MappingProxyType
+from typing import Callable, Dict, List, Optional, Union, NamedTuple
+from types import MappingProxyType
 from pathlib import Path
 from pydantic import BaseModel, field_validator
 
