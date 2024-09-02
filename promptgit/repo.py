@@ -4,6 +4,8 @@
 
 """
 
+from typing import Union
+
 from pathlib import Path
 
 from dulwich.repo import Repo as DRepo
@@ -17,18 +19,32 @@ GIT_START = ["git", "https", "http"]
 class PromptRepo:
     """
     Prompt repository
+
+    PromptRepo:
+        path: location of repo. None means current directory
     """
 
     def __init__(
         self,
-        path,
-        history=10,
+        path: Union[None, str, Path],
+        history: int =10,
         parsers=PARSERS,
         name_inference=PromptLocation.from_dir,
         overide=False,
         raise_exception=True,
     ):
-        self.home = Path(path)
+        if not path:
+            self.home = Path.cwd()
+        elif isinstance(path, Path):
+            self.home = path
+        else:
+            self.home = Path(path)
+
+        if not self.home.exists():
+            raise FileExistsError(f"Directory {str(self.home)} does not exists")
+        if not self.home.is_dir():
+            raise ValueError(f"{str(self.home)} is not a directory")
+
         self.parsers = parsers
         self.name_inference = name_inference
         self.overide = overide
@@ -69,6 +85,13 @@ class PromptRepo:
             )
             self.file_names[str(f.relative_to(self.home))] = prompt
             self.prompts[str(prompt.location)] = prompt
+
+
+    # Get string version of prompt
+    # repo(location)
+    # repo[location]
+    def __getitem__(self, location):
+        return self.__call__(location)
 
     def __call__(self, location):
         if location in self.prompts:
