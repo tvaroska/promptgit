@@ -5,6 +5,8 @@
 """
 
 import json
+import string
+
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Union, NamedTuple
 from types import MappingProxyType
@@ -143,6 +145,7 @@ class Prompt(BaseModel):
     application: Optional[str] = None
     name: Optional[str] = None
     use_case: Optional[str] = None
+    variables: Optional[List[str]]
 
     @field_validator("models")
     @classmethod
@@ -164,6 +167,12 @@ class Prompt(BaseModel):
             _type_: _description_
         """
         all_fields = parser(content)
+
+        all_fields["variables"] = {
+            v for _, v, _, _ in string.Formatter().parse(all_fields["prompt"]) if v is not None
+        }
+
+
         return cls(**all_fields)
 
     def __str__(self):
