@@ -145,7 +145,7 @@ class Prompt(BaseModel):
     application: Optional[str] = None
     name: Optional[str] = None
     use_case: Optional[str] = None
-    variables: Optional[List[str]]
+    variables: Optional[List[str]] = None
 
     @field_validator("models")
     @classmethod
