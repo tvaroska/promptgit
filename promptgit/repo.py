@@ -22,6 +22,10 @@ class PromptRepo:
 
     PromptRepo:
         path: location of repo. None means current directory
+        history: how many commits to the past to parse,
+        parsers: dictionary of file parsers (markdown, json and text is default),
+        name_inference: application/name default inference from directory and filename,
+        raise_exception: raise exception if prompt not fount (default) or return None,
     """
 
     def __init__(
@@ -30,7 +34,6 @@ class PromptRepo:
         history: int =10,
         parsers=PARSERS,
         name_inference=PromptLocation.from_dir,
-        overide=False,
         raise_exception=True,
     ):
         if not path:
@@ -47,7 +50,6 @@ class PromptRepo:
 
         self.parsers = parsers
         self.name_inference = name_inference
-        self.overide = overide
         self.raise_exception = raise_exception
 
         if any([path.startswith(git) for git in GIT_START]):
@@ -73,15 +75,14 @@ class PromptRepo:
             prompt = self.parse_file(f)
             location = name_inference(f.relative_to(self.home))
 
-            # Overide only if prompt.application is None or overide is True
-            # ,otherwise keep
+            # Overide only if prompt.application is None
             prompt.application = (
                 location.application
-                if not prompt.application or overide
+                if not prompt.application
                 else prompt.application
             )
             prompt.name = (
-                location.name if not prompt.name or overide else prompt.name
+                location.name if not prompt.name else prompt.name
             )
             self.file_names[str(f.relative_to(self.home))] = prompt
             self.prompts[str(prompt.location)] = prompt
