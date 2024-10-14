@@ -4,6 +4,7 @@ import pytest
 from promptgit.repo import PromptRepo
 
 TEST_REPO = '/workspace/promptest'
+REMOTE = 'https://github.com/tvaroska/promptest.git'
 
 # TODO: test as non-git !!!
 
@@ -27,3 +28,8 @@ def test_changes(repo):
 
     assert changes[0].name == 'first'
     assert changes[1].name == 'second'
+
+def test_remote():
+    repo = PromptRepo(REMOTE)
+
+    assert repo('test') == 'Hi. How are you doing?'

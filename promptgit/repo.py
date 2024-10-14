@@ -7,13 +7,11 @@
 from typing import Union
 
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
-# Refarctor from dulwich to GitPython
 from git import Repo as DRepo
 from git import Blob
 from git import InvalidGitRepositoryError
-# from dulwich.repo import Repo as DRepo
-# from dulwich.errors import NotGitRepository
 
 from .prompt import PARSERS, FileTypes, Prompt, PromptLocation
 
@@ -40,26 +38,30 @@ class PromptRepo:
         name_inference=PromptLocation.from_dir,
         raise_exception=True,
     ):
-# TODO: handle remote !!!
-        if not path:
-            self.home = Path.cwd()
-        elif isinstance(path, Path):
-            self.home = path
-        else:
-            self.home = Path(path)
-
-        if not self.home.exists():
-            raise FileExistsError(f"Directory {str(self.home)} does not exists")
-        if not self.home.is_dir():
-            raise ValueError(f"{str(self.home)} is not a directory")
-
         self.parsers = parsers
         self.name_inference = name_inference
         self.raise_exception = raise_exception
 
-        if any([path.startswith(git) for git in GIT_START]):
-            raise NotImplementedError('Remote git repositories are not implemented yet')
+        # Remote repo
+        # WARNING for https method: if repo does not exists, it will wait for username/password
+        if path and any([path.startswith(git) for git in GIT_START]):
+            self.tempdir = TemporaryDirectory()
+            self.repo = DRepo.clone_from(path, self.tempdir.name)
+            self.home = Path(self.tempdir.name)
         else:
+            self.tempdir = None
+            if not path:
+                self.home = Path.cwd()
+            elif isinstance(path, Path):
+                self.home = path
+            else:
+                self.home = Path(path)
+
+            if not self.home.exists():
+                raise FileExistsError(f"Directory {str(self.home)} does not exists")
+            if not self.home.is_dir():
+                raise ValueError(f"{str(self.home)} is not a directory")
+
             try:
                 self.repo = DRepo(path)
             except InvalidGitRepositoryError:
@@ -97,6 +99,10 @@ class PromptRepo:
                 self.prompts[f'{prompt.application}/{prompt.name}'] = prompt
             else:
                 self.prompts[f'{prompt.name}'] = prompt
+
+    def __del__(self):
+        if self.tempdir:
+            del self.tempdir
 
     # Get string version of prompt
     # repo(location)
