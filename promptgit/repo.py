@@ -33,10 +33,10 @@ class PromptRepo:
     def __init__(
         self,
         path: Union[None, str, Path],
-        history: int =10,
         parsers=PARSERS,
         name_inference=PromptLocation.from_dir,
         raise_exception=True,
+        tag: str = None
     ):
         self.parsers = parsers
         self.name_inference = name_inference
@@ -67,11 +67,20 @@ class PromptRepo:
             except InvalidGitRepositoryError:
                 self.repo = None
 
-# commit (can be repo.head.commit) .tree.traverse() 
-# TODO: handle non-git repos !
+        if tag:
+            self.tag = tag
+            try:
+                idx = [t.name for t in self.repo.tags].index(self.tag)
+            except ValueError:
+                raise ValueError(f'Tag {self.tag} does not exists')
+            self.commit = self.repo.tags[idx].commit
+        else:
+            self.commit = self.repo.head.commit
+
+
         self.files = [
             item
-            for item in self.repo.head.commit.tree.traverse()
+            for item in self.commit.tree.traverse()
             if item.type == 'blob' and item.name.split('.')[-1] in ['md', 'txt', 'json']
         ]
         self.prompts = {}
