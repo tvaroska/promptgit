@@ -8,8 +8,12 @@ from typing import Union
 
 from pathlib import Path
 
-from dulwich.repo import Repo as DRepo
-from dulwich.errors import NotGitRepository
+# Refarctor from dulwich to GitPython
+from git import Repo as DRepo
+from git import Blob
+from git import InvalidGitRepositoryError
+# from dulwich.repo import Repo as DRepo
+# from dulwich.errors import NotGitRepository
 
 from .prompt import PARSERS, FileTypes, Prompt, PromptLocation
 
@@ -36,6 +40,7 @@ class PromptRepo:
         name_inference=PromptLocation.from_dir,
         raise_exception=True,
     ):
+# TODO: handle remote !!!
         if not path:
             self.home = Path.cwd()
         elif isinstance(path, Path):
@@ -53,27 +58,30 @@ class PromptRepo:
         self.raise_exception = raise_exception
 
         if any([path.startswith(git) for git in GIT_START]):
-            raise NotImplementedError
+            raise NotImplementedError('Remote git repositories are not implemented yet')
         else:
             try:
                 self.repo = DRepo(path)
-                self.commits = list(self.repo.get_walker(max_entries=history))
-            except NotGitRepository:
+            except InvalidGitRepositoryError:
                 self.repo = None
 
+# commit (can be repo.head.commit) .tree.traverse() 
+# TODO: handle non-git repos !
         self.files = [
-            p
-            for p in self.home.rglob("*")
-            if p.is_file()
-            and not any(
-                [part[0] == "." for part in p.parts]
-            )  # Filter any hidden directories
+            item
+            for item in self.repo.head.commit.tree.traverse()
+            if item.type == 'blob' and item.name.split('.')[-1] in ['md', 'txt', 'json']
         ]
         self.prompts = {}
         self.file_names = {}
         for f in self.files:
             prompt = self.parse_file(f)
-            location = name_inference(f.relative_to(self.home))
+            if isinstance(f, Blob):
+                fname = f.path
+            else:
+                fname = f.relative_to(self.home)
+
+            location = name_inference(fname)
 
             # Overide only if prompt.application is None
             prompt.application = (
@@ -84,9 +92,11 @@ class PromptRepo:
             prompt.name = (
                 location.name if not prompt.name else prompt.name
             )
-            self.file_names[str(f.relative_to(self.home))] = prompt
-            self.prompts[str(prompt.location)] = prompt
-
+            self.file_names[fname] = prompt
+            if prompt.application:
+                self.prompts[f'{prompt.application}/{prompt.name}'] = prompt
+            else:
+                self.prompts[f'{prompt.name}'] = prompt
 
     # Get string version of prompt
     # repo(location)
@@ -106,21 +116,28 @@ class PromptRepo:
     def list_changes(self):
         if not self.repo:
             return None
-        last_commit = self.commits[0]
+        head = self.repo.head.commit
+        past = head.parents[0]
+        changes = past.diff(head)
         changed_files = [
-            change.new.path
-            for change in last_commit.changes()
-            if change.type != "delete"
+            change.b_path
+            for change in changes
+            if change.change_type in ['A', 'M']
         ]
 
-        changed_prompts = [self.file_names[f.decode()] for f in changed_files]
+        changed_prompts = [self.file_names[f] for f in changed_files]
 
         return changed_prompts
 
-    def parse_file(self, f: Path):
-        content = f.read_text()
+    def parse_file(self, f: Union[Blob | Path]):
+        if isinstance(f, Blob):
+            content = f.data_stream.read().decode('utf-8')
+            ftype = f.name.split('.')[-1]
+        else:
+            content = f.read_text()
+            ftype = f.suffix[1:]
         try:
-            parser = PARSERS[FileTypes(f.suffix[1:])]
+            parser = PARSERS[FileTypes(ftype)]
         except ValueError:
             # If there is no filetype - let's assume it is pure text
             parser = PARSERS[FileTypes("txt")]

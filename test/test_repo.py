@@ -1,12 +1,18 @@
+import os
 import pytest
 
 from promptgit.repo import PromptRepo
 
-TEST_REPO = '/workspace/promptstore'
+TEST_REPO = '/workspace/promptest'
+
+# TODO: test as non-git !!!
 
 @pytest.fixture
 def repo():
-    return PromptRepo(TEST_REPO)
+    location = os.getenv('PROMPT_REPO')
+    if not location:
+        location = TEST_REPO
+    return PromptRepo(location)
 
 def test_main(repo):
     assert repo('test') == 'Hi. How are you doing?'
