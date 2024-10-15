@@ -36,11 +36,14 @@ class PromptRepo:
         parsers=PARSERS,
         name_inference=PromptLocation.from_dir,
         raise_exception=True,
+        prompt_format: str = 'str',
         tag: str = None
     ):
         self.parsers = parsers
         self.name_inference = name_inference
         self.raise_exception = raise_exception
+        # TODO: check validity
+        self.prompt_format = prompt_format
 
         # Remote repo
         # WARNING for https method: if repo does not exists, it will wait for username/password
@@ -121,7 +124,10 @@ class PromptRepo:
 
     def __call__(self, location):
         if location in self.prompts:
-            return str(self.prompts[location])
+            if self.prompt_format == 'str':
+                return str(self.prompts[location])
+            if self.prompt_format == 'langchain':
+                return self.prompts[location].as_langchain()
         else:
             if self.raise_exception:
                 raise KeyError(f"Prompt {location} does not exists")

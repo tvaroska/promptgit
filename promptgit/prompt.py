@@ -13,6 +13,7 @@ from types import MappingProxyType
 from pathlib import Path
 from pydantic import BaseModel, field_validator
 
+from langchain_core.prompts import PromptTemplate
 
 class FileTypes(str, Enum):
     """
@@ -174,6 +175,9 @@ class Prompt(BaseModel):
 
 
         return cls(**all_fields)
+
+    def as_langchain(self):
+        return PromptTemplate.from_template(self.prompt)
 
     def __str__(self):
         return self.prompt
