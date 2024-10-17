@@ -21,7 +21,7 @@ prompts('application/name')
 prompts = promptgit.PromptRepo()
 
 ### Open prompts in 'prompts' subdirectory relative to current directory
-prompts = promptgit.PromptRepo('prompts')
+prompts = promptgit.PromptRepo(dir='prompts')
 
 ### Open directory from Pathlib object
 prompts = promptgit.PromptRepo(pathlib.Path.cwd())

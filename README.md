@@ -1,9 +1,9 @@
-# promptgit
-Temporary - PromptGit development
+# Promptgit
+Managing prompts for LLM in git repository
 
-# TODO
-[ ] Documentation - docstrings
-[ ] parse_yaml -> import yaml file
-[ ] Documentation - sphinx
-[ ] variables - fstring
-[ ] variables - jinja2
+### Open prompts from current (local directory)
+prompts = promptgit.PromptRepo()
+
+### get prompt text
+prompts['application/name']
+
