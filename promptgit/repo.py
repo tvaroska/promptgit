@@ -33,6 +33,7 @@ class PromptRepo:
     def __init__(
         self,
         path: Union[None, str, Path],
+        dir: str = None,
         parsers=PARSERS,
         name_inference=PromptLocation.from_dir,
         raise_exception=True,
@@ -80,11 +81,11 @@ class PromptRepo:
         else:
             self.commit = self.repo.head.commit
 
-
+        self.dir = dir if dir else ''
         self.files = [
             item
             for item in self.commit.tree.traverse()
-            if item.type == 'blob' and item.name.split('.')[-1] in ['md', 'txt', 'json']
+            if item.type == 'blob' and item.name.split('.')[-1] in ['md', 'txt', 'json'] and item.path.startswith(self.dir)
         ]
         self.prompts = {}
         self.file_names = {}

@@ -33,3 +33,12 @@ def test_remote():
     repo = PromptRepo(REMOTE)
 
     assert repo('test') == 'Hi. How are you doing?'
+
+def test_subdir():
+    repo = PromptRepo(TEST_REPO, dir='questions')
+    with pytest.raises(KeyError) as exec_info:
+        assert repo('test') == 'Hi. How are you doing?'
+    assert isinstance(exec_info.value, KeyError)
+
+    prompt = repo('pirates/first')
+    assert prompt == "Answer question in pirate voice.\nQuestion: {question}\nAnswer:"
