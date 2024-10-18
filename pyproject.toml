@@ -11,7 +11,10 @@ python = ">=3.9,<3.14"
 pydantic = ">=2.5.2,<3.0"
 GitPython = ">=3.0.0,<4.0.0"
 urllib3 = ">=2.2.2,<3.0.0"
-langchain-core = ">=0.3.0,<0.4.0"
+langchain-core = { version = ">=0.3.0,<0.4.0", optional = true }
+
+[tool.poetry.extras]
+langchain = [ "langchain-core" ]
 
 
 [tool.poetry.group.dev.dependencies]
