@@ -6,6 +6,7 @@
 
 import json
 import string
+import yaml
 
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Union, NamedTuple
@@ -21,8 +22,7 @@ class FileTypes(str, Enum):
     TXT = "txt"
     MARKDOWN = "md"
     JSON = "json"
-    # TODO
-    # YAML = "yaml"
+    YAML = "yaml"
 
 
 
@@ -75,6 +75,8 @@ def parse_txt(text) -> Dict:
 def parse_json(text) -> Dict:
     return json.loads(text)
 
+def parse_yaml(text) -> Dict:
+    return yaml.load(text)
 
 def parse_md(text: str) -> Dict:
     current_section = None
@@ -128,6 +130,7 @@ PARSERS = MappingProxyType({
     FileTypes.TXT: parse_txt,
     FileTypes.JSON: parse_json,
     FileTypes.MARKDOWN: parse_md,
+    FileTypes.YAML: parse_yaml
 })
 
 

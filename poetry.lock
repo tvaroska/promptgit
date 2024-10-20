@@ -15,7 +15,7 @@ files = [
 name = "anyio"
 version = "4.6.2.post1"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "anyio-4.6.2.post1-py3-none-any.whl", hash = "sha256:6d170c36fba3bdd840c73d3868c1e777e33676a69c3a72cf0a0d5d6d8009b61d"},
@@ -108,7 +108,7 @@ files = [
 name = "certifi"
 version = "2024.8.30"
 description = "Python package for providing Mozilla's CA Bundle."
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "certifi-2024.8.30-py3-none-any.whl", hash = "sha256:922820b53db7a7257ffbda3f597266d435245903d80737e34f8a45ff3e3230d8"},
@@ -130,7 +130,7 @@ files = [
 name = "charset-normalizer"
 version = "3.4.0"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
-optional = false
+optional = true
 python-versions = ">=3.7.0"
 files = [
     {file = "charset_normalizer-3.4.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:4f9fc98dad6c2eaa32fc3af1417d95b5e3d08aff968df0cd320066def971f9a6"},
@@ -357,7 +357,7 @@ test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock", "mypy", "pre-commit",
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
@@ -368,7 +368,7 @@ files = [
 name = "httpcore"
 version = "1.0.6"
 description = "A minimal low-level HTTP client."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "httpcore-1.0.6-py3-none-any.whl", hash = "sha256:27b59625743b85577a8c0e10e55b50b5368a4f2cfe8cc7bcfa9cf00829c2682f"},
@@ -389,7 +389,7 @@ trio = ["trio (>=0.22.0,<1.0)"]
 name = "httpx"
 version = "0.27.2"
 description = "The next generation HTTP client."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "httpx-0.27.2-py3-none-any.whl", hash = "sha256:7bb2708e112d8fdd7829cd4243970f0c223274051cb35ee80c03301ee29a3df0"},
@@ -414,7 +414,7 @@ zstd = ["zstandard (>=0.18.0)"]
 name = "idna"
 version = "3.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3"},
@@ -453,7 +453,7 @@ colors = ["colorama (>=0.4.6)"]
 name = "jsonpatch"
 version = "1.33"
 description = "Apply JSON-Patches (RFC 6902)"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*"
 files = [
     {file = "jsonpatch-1.33-py2.py3-none-any.whl", hash = "sha256:0ae28c0cd062bbd8b8ecc26d7d164fbbea9652a1a3693f3b956c1eae5145dade"},
@@ -467,7 +467,7 @@ jsonpointer = ">=1.9"
 name = "jsonpointer"
 version = "3.0.0"
 description = "Identify specific nodes in a JSON document (RFC 6901)"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "jsonpointer-3.0.0-py2.py3-none-any.whl", hash = "sha256:13e088adc14fca8b6aa8177c044e12701e6ad4b28ff10e65f2267a90109c9942"},
@@ -478,7 +478,7 @@ files = [
 name = "langchain-core"
 version = "0.3.10"
 description = "Building applications with LLMs through composability"
-optional = false
+optional = true
 python-versions = "<4.0,>=3.9"
 files = [
     {file = "langchain_core-0.3.10-py3-none-any.whl", hash = "sha256:146be6bf2d3dc0d6f4feb46ef082182cf57b056e8163d45278529cd7b7343d2f"},
@@ -501,7 +501,7 @@ typing-extensions = ">=4.7"
 name = "langsmith"
 version = "0.1.135"
 description = "Client library to connect to the LangSmith LLM Tracing and Evaluation Platform."
-optional = false
+optional = true
 python-versions = "<4.0,>=3.8.1"
 files = [
     {file = "langsmith-0.1.135-py3-none-any.whl", hash = "sha256:b1d1ca3bad483a4239745c57e9b9157b4d099fbf3149be21e3d112c94ede06ac"},
@@ -544,7 +544,7 @@ files = [
 name = "orjson"
 version = "3.10.7"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "orjson-3.10.7-cp310-cp310-macosx_10_15_x86_64.macosx_11_0_arm64.macosx_10_15_universal2.whl", hash = "sha256:74f4544f5a6405b90da8ea724d15ac9c36da4d72a738c64685003337401f5c12"},
@@ -920,7 +920,7 @@ files = [
 name = "requests"
 version = "2.32.3"
 description = "Python HTTP for Humans."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"},
@@ -941,7 +941,7 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 name = "requests-toolbelt"
 version = "1.0.0"
 description = "A utility belt for advanced users of python-requests"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
     {file = "requests-toolbelt-1.0.0.tar.gz", hash = "sha256:7681a0a3d047012b5bdc0ee37d7f8f07ebe76ab08caeccfc3921ce23c88d5bc6"},
@@ -966,7 +966,7 @@ files = [
 name = "sniffio"
 version = "1.3.1"
 description = "Sniff out which async library your code is running under"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
@@ -977,7 +977,7 @@ files = [
 name = "tenacity"
 version = "8.5.0"
 description = "Retry code until it succeeds"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "tenacity-8.5.0-py3-none-any.whl", hash = "sha256:b594c2a5945830c267ce6b79a166228323ed52718f30302c1359836112346687"},
@@ -1086,7 +1086,10 @@ platformdirs = ">=3.9.1,<5"
 docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2,!=7.3)", "sphinx-argparse (>=0.4)", "sphinxcontrib-towncrier (>=0.2.1a0)", "towncrier (>=23.6)"]
 test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
+[extras]
+langchain = ["langchain-core"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.14"
-content-hash = "da117fdfbb969ac0e7a9a115d86afc2de7218e379e18daee79247d1ba1121d80"
+content-hash = "bbaec561b5ecf030eaf100d29f63f790350fd855fe22d59fa4f11da27f0c11d7"

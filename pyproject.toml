@@ -12,6 +12,7 @@ pydantic = ">=2.5.2,<3.0"
 GitPython = ">=3.0.0,<4.0.0"
 urllib3 = ">=2.2.2,<3.0.0"
 langchain-core = { version = ">=0.3.0,<0.4.0", optional = true }
+pyyaml = ">=6.0.0"
 
 [tool.poetry.extras]
 langchain = [ "langchain-core" ]
