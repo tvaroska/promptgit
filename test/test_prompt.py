@@ -39,3 +39,13 @@ def test_md(data):
     assert prompt.description == "Just a stupid test"
     assert prompt.application == "debugger"
     assert prompt.use_case == "creative"
+
+def test_from_text_variables():
+    prompt = Prompt.from_text('You are an executive assistant to {user}. The tasks are {tasks}')
+
+    assert prompt.variables == ['user', 'tasks']
+
+def test_direct_variables():
+    prompt = Prompt(prompt='You are an executive assistant to {user}. The tasks are {tasks}')
+
+    assert prompt.variables == ['user', 'tasks']
