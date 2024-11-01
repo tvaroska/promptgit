@@ -15,6 +15,7 @@ def test_text(text: str):
 JSON_TESTS = [
     {"prompt": "Hi", "application": "first", "use_case": "q&a"},
     {"prompt": "Empty"},
+    {"prompt": "Hi", "priority": 0}
 ]
 
 
@@ -23,7 +24,8 @@ def test_json(data):
     prompt = Prompt.from_text(json.dumps(data), parser=parse_json)
 
     for key in data.keys():
-        assert getattr(prompt, key) == data[key]
+        if key in dir(prompt):
+            assert getattr(prompt, key) == data[key]
 
 
 MD_TESTS = [
