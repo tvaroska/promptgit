@@ -13,7 +13,7 @@ from git import Repo as DRepo
 from git import Blob
 from git import InvalidGitRepositoryError
 
-from .prompt import PARSERS, FileTypes, Prompt, PromptLocation
+from .prompt import Prompt, PromptLocation
 
 GIT_START = ["git", "https", "http"]
 
@@ -34,13 +34,11 @@ class PromptRepo:
         self,
         path: Union[None, str, Path],
         dir: str = None,
-        parsers=PARSERS,
         name_inference=PromptLocation.from_dir,
         raise_exception=True,
         prompt_format: str = 'str',
         tag: str = None
     ):
-        self.parsers = parsers
         self.name_inference = name_inference
         self.raise_exception = raise_exception
         # TODO: check validity
@@ -158,9 +156,11 @@ class PromptRepo:
         else:
             content = f.read_text()
             ftype = f.suffix[1:]
-        try:
-            parser = PARSERS[FileTypes(ftype)]
-        except ValueError:
-            # If there is no filetype - let's assume it is pure text
-            parser = PARSERS[FileTypes("txt")]
-        return Prompt.from_text(content, parser)
+        if ftype == 'md':
+            return Prompt.from_md(content)
+        elif ftype == 'json':
+            return Prompt.from_json(content)
+        elif ftype == 'yaml':
+            return Prompt.from_yaml(content)
+        else:
+            return Prompt.from_text(content)

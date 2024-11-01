@@ -17,6 +17,6 @@
 
 """
 from .repo import PromptRepo
-from .prompt import FileTypes, Prompt
+from .prompt import Prompt
 
 __all__ = ['PromptRepo', 'FileTypes', 'Prompt']

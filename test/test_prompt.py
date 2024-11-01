@@ -3,8 +3,6 @@ import json
 import pytest
 
 from promptgit import Prompt
-from promptgit.prompt import parse_json, parse_md
-
 
 @pytest.mark.parametrize("text", ["Hi", "How are you?"])
 def test_text(text: str):
@@ -21,7 +19,7 @@ JSON_TESTS = [
 
 @pytest.mark.parametrize("data", JSON_TESTS)
 def test_json(data):
-    prompt = Prompt.from_text(json.dumps(data), parser=parse_json)
+    prompt = Prompt.from_json(json.dumps(data))
 
     for key in data.keys():
         if key in dir(prompt):
@@ -35,7 +33,7 @@ MD_TESTS = [
 
 @pytest.mark.parametrize("data", MD_TESTS)
 def test_md(data):
-    prompt = Prompt.from_text(data, parser=parse_md)
+    prompt = Prompt.from_md(data)
 
     assert prompt.prompt == "Hi. How are you doing?"
     assert prompt.description == "Just a stupid test"
