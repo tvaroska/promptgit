@@ -23,11 +23,12 @@ class PromptRepo:
     Prompt repository
 
     PromptRepo:
-        path: location of repo. None means current directory
+        path: location of repo. None means current directory. Remote location on git compatible repo
         history: how many commits to the past to parse,
-        parsers: dictionary of file parsers (markdown, json and text is default),
         name_inference: application/name default inference from directory and filename,
         raise_exception: raise exception if prompt not fount (default) or return None,
+        prompt_format: format of variables in the prompts. str (f-string) only
+        tag (str): checkout tag for the repo
     """
 
     def __init__(
@@ -115,9 +116,6 @@ class PromptRepo:
         if self.tempdir:
             del self.tempdir
 
-    # Get string version of prompt
-    # repo(location)
-    # repo[location]
     def __getitem__(self, location):
         return self.__call__(location)
 

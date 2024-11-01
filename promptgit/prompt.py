@@ -106,13 +106,18 @@ class Prompt(BaseModel):
 
     Parameters:
         prompt (str): content of the prompt
+        application (str) and name (str) : defines adress of the prompt in repo
+        models (str or list of str): acceptable models for prompt
+        description (str): description of prompt
+        use_case (str): High level use case, for example summarization, qan
+        variables (list): List of variable names (str for now)
     """
 
     prompt: str
-    models: Union[str, List[str]] = []
-    description: Optional[str] = None
     application: Optional[str] = None
     name: Optional[str] = None
+    models: Union[str, List[str]] = []
+    description: Optional[str] = None
     use_case: Optional[str] = None
     variables: Optional[List[str]] = None
 
