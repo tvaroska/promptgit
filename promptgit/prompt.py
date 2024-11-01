@@ -1,5 +1,4 @@
 """
-
     Core prompt object
 
 """
@@ -12,7 +11,7 @@ from enum import Enum
 from typing import Callable, Dict, List, Optional, Union, NamedTuple
 from types import MappingProxyType
 from pathlib import Path
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 class FileTypes(str, Enum):
     """
@@ -157,6 +156,20 @@ class Prompt(BaseModel):
         else:
             return models
 
+    @model_validator(mode='after')
+    def parse_variables(self) -> 'Prompt':
+        """Parse variables from the prompt template and store them in variables property"""
+        # Get all variables from the prompt using string.Formatter
+        # Preserve order of appearance in the prompt
+        variables = []
+        for _, var, _, _ in string.Formatter().parse(self.prompt):
+            if var is not None and var not in variables:
+                variables.append(var)
+        
+        self.variables = variables if variables else None
+        
+        return self
+
     @classmethod
     def from_text(cls, content: str, parser: Callable = parse_txt):
         """Create object from text string
@@ -169,16 +182,9 @@ class Prompt(BaseModel):
             _type_: _description_
         """
         all_fields = parser(content)
-
-        all_fields["variables"] = {
-            v for _, v, _, _ in string.Formatter().parse(all_fields["prompt"]) if v is not None
-        }
-
-
         return cls(**all_fields)
 
     def as_langchain(self):
-
         try:
             from langchain_core.prompts import PromptTemplate
         except ModuleNotFoundError:
