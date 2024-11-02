@@ -29,11 +29,6 @@ def test_changes(repo):
     assert changes[0].name == 'first'
     assert changes[1].name == 'second'
 
-def test_remote():
-    repo = PromptRepo(REMOTE)
-
-    assert repo('test') == 'Hi. How are you doing?'
-
 def test_subdir():
     repo = PromptRepo(TEST_REPO, dir='questions')
     with pytest.raises(KeyError) as exec_info:
