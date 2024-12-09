@@ -3,12 +3,10 @@
 
 """
 
-import json
 import string
 import yaml
 
-from enum import Enum
-from typing import Dict, List, Optional, Union, NamedTuple
+from typing import Dict, List, Optional, Union, NamedTuple, Literal
 from pathlib import Path
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -101,13 +99,8 @@ def parse_md(text: str) -> Dict:
 
     return content
 
-class PromptRoles(Enum):
-    system = 'system'
-    human = 'human'
-    ai = 'ai'
-
 class PromptTurn(BaseModel):
-    role: PromptRoles
+    role: Literal['system', 'user', 'human', 'model', 'ai']
     content: str
 
 class Prompt(BaseModel):
@@ -167,7 +160,7 @@ class Prompt(BaseModel):
 
     @classmethod
     def from_yaml(cls, content: str):
-        return cls(**yaml.load(content))
+        return cls.model_validate(yaml.safe_load(content))
 
     @classmethod
     def from_md(cls, content: str):
