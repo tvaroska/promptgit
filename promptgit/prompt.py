@@ -7,6 +7,7 @@ import json
 import string
 import yaml
 
+from enum import Enum
 from typing import Dict, List, Optional, Union, NamedTuple
 from pathlib import Path
 from pydantic import BaseModel, field_validator, model_validator
@@ -100,6 +101,14 @@ def parse_md(text: str) -> Dict:
 
     return content
 
+class PromptRoles(Enum):
+    system = 'system'
+    human = 'human'
+    ai = 'ai'
+
+class PromptTurn(BaseModel):
+    role: PromptRoles
+    content: str
 
 class Prompt(BaseModel):
     """Core prompt object
@@ -113,7 +122,7 @@ class Prompt(BaseModel):
         variables (list): List of variable names (str for now)
     """
 
-    prompt: str
+    prompt: Union[str, List[PromptTurn]]
     application: Optional[str] = None
     name: Optional[str] = None
     models: Union[str, List[str]] = []
@@ -135,9 +144,14 @@ class Prompt(BaseModel):
         # Get all variables from the prompt using string.Formatter
         # Preserve order of appearance in the prompt
         variables = []
-        for _, var, _, _ in string.Formatter().parse(self.prompt):
-            if var is not None and var not in variables:
-                variables.append(var)
+        if isinstance(self.prompt, str):
+            prompts = [self.prompt]
+        else:
+            prompts = [turn.content for turn in self.prompt]
+        for prompt in prompts:
+            for _, var, _, _ in string.Formatter().parse(prompt):
+                if var is not None and var not in variables:
+                    variables.append(var)
         
         self.variables = variables if variables else None
         
@@ -149,7 +163,7 @@ class Prompt(BaseModel):
 
     @classmethod
     def from_json(cls, content: str):
-        return cls(**json.loads(content))
+        return cls.model_validate_json(content)
 
     @classmethod
     def from_yaml(cls, content: str):
@@ -213,7 +227,10 @@ class Prompt(BaseModel):
         return PromptTemplate.from_template(self.prompt)
 
     def __str__(self):
-        return self.prompt
+        if isinstance(self.prompt, str):
+            return self.prompt
+        else:
+            return '['+','.join([item.json() for item in self.prompt])+']'
 
     @property
     def location(self):
