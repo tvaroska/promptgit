@@ -153,11 +153,18 @@ class Prompt(BaseModel):
 
     def as_langchain(self):
         try:
-            from langchain_core.prompts import PromptTemplate
+            from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
         except ModuleNotFoundError:
             raise ModuleNotFoundError('Install promptgit[langchain] to use with langchain prompts')
 
-        return PromptTemplate.from_template(self.prompt)
+        if isinstance(self.prompt, str):
+            return PromptTemplate(template=self.prompt, template_format='f-string', input_variables=self.variables)
+        else:
+            return ChatPromptTemplate(
+                template = [(item.role, item.content) for item in self.prompt],
+                template_format='f-string',
+                input_variables=self.variables
+            )
 
     def __str__(self):
         if isinstance(self.prompt, str):
