@@ -19,4 +19,5 @@
 from .repo import PromptRepo
 from .prompt import Prompt
 
+__version__ = '0.2.5'
 __all__ = ['PromptRepo', 'FileTypes', 'Prompt']

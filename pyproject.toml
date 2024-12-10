@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "promptgit"
-version = "0.2.0"
+version = "0.2.5"
 description = "Managing prompts for LLM in Git repository"
 authors = ["Boris Tvaroska <boris@tvaroska.sk>"]
 license = "Apache 2.0"
