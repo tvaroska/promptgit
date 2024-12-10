@@ -144,6 +144,9 @@ class Prompt(BaseModel):
             return response
 
         fields = parse_children(mistletoe.Document(content).children)
+        # Multiple models - each one at one line
+        if 'models' in fields:
+            fields['models'] = fields['models'].split('\n')
 
         return cls.model_validate(fields)
 
