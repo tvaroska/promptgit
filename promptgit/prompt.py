@@ -10,9 +10,9 @@ from typing import Dict, List, Optional, Union, NamedTuple, Literal
 from pathlib import Path
 from pydantic import BaseModel, field_validator, model_validator
 
-
-MULTI_LINE = ["prmpt", "description"]
-
+import mistletoe
+from mistletoe.block_token import Heading, Paragraph
+from mistletoe.span_token import LineBreak
 
 class PromptLocation(NamedTuple):
     """
@@ -50,54 +50,6 @@ class PromptLocation(NamedTuple):
             return f"{self.application}/{self.name}"
         else:
             return f"{self.name}"
-
-
-def parse_md(text: str) -> Dict:
-    current_section = None
-    content = {}
-
-    def safe_add(data, key, line):
-        if key in data:
-            if isinstance(data[key], str):
-                data[key] = data[key] + "\n" + line
-            elif isinstance(data[key], list):
-                data[key].append(line)
-            else:
-                raise NotImplementedError
-        else:
-            if key in "models":
-                data[key] = [line]
-            else:
-                data[key] = line
-        return data
-
-    def standardize_sections(key: str) -> str:
-        return (
-            key.replace("#", "")
-            .strip()
-            .lower()
-            .replace(" ", "_")
-            .replace("-", "_")
-        )
-
-    for line in text.splitlines():
-        if line.strip() == "":
-            if current_section and current_section in MULTI_LINE:
-                content = safe_add(content, current_section, line)
-                continue
-            else:
-                continue
-        if line[0] == "#":
-            current_section = standardize_sections(line)
-            continue
-        if not current_section:
-            current_section = "prompt"
-        if current_section in content:
-            content[current_section] = content[current_section] + "\n" + line
-        else:
-            content[current_section] = line
-
-    return content
 
 class PromptTurn(BaseModel):
     role: Literal['system', 'user', 'human', 'model', 'ai']
@@ -164,51 +116,36 @@ class Prompt(BaseModel):
 
     @classmethod
     def from_md(cls, content: str):
-        current_section = None
-        fields = {}
 
-        def safe_add(data, key, line):
-            if key in data:
-                if isinstance(data[key], str):
-                    data[key] = data[key] + "\n" + line
-                elif isinstance(data[key], list):
-                    data[key].append(line)
+        def parse_children(children):
+
+            max_level = min([item.level for item in children if isinstance(item, Heading)])
+
+            top_level = [(item, idx) for (idx, item) in enumerate(children) if isinstance(item, Heading) and item.level == max_level]
+
+            response = {}
+  
+            for i, (heading, idx) in enumerate(top_level):
+                if isinstance(children[idx+1], Paragraph):
+                    content = ''
+                    for child in children[idx+1].children:
+                        if isinstance(child, LineBreak):
+                            content += '\n'
+                        else:
+                            try:
+                                content += child.content
+                            except AttributeError:
+                                pass
                 else:
-                    raise NotImplementedError
-            else:
-                if key in "models":
-                    data[key] = [line]
-                else:
-                    data[key] = line
-            return data
+                    print(f'{idx+1} - {top_level[i+1][1]}')
+                    content = parse_children(children[idx+1:top_level[i+1][1]])
+                response[heading.children[0].content.strip().lower().replace(" ", "_").replace("-", "_")] = content
+    
+            return response
 
-        def standardize_sections(key: str) -> str:
-            return (
-                key.replace("#", "")
-                .strip()
-                .lower()
-                .replace(" ", "_")
-                .replace("-", "_")
-            )
+        fields = parse_children(mistletoe.Document(content).children)
 
-        for line in content.splitlines():
-            if line.strip() == "":
-                if current_section and current_section in MULTI_LINE:
-                    fields = safe_add(fields, current_section, line)
-                    continue
-                else:
-                    continue
-            if line[0] == "#":
-                current_section = standardize_sections(line)
-                continue
-            if not current_section:
-                current_section = "prompt"
-            if current_section in fields:
-                fields[current_section] = fields[current_section] + "\n" + line
-            else:
-                fields[current_section] = line
-
-        return cls(**fields)
+        return cls.model_validate(fields)
 
 
     def as_langchain(self):

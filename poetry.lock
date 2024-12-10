@@ -532,6 +532,17 @@ files = [
 ]
 
 [[package]]
+name = "mistletoe"
+version = "1.4.0"
+description = "A fast, extensible Markdown parser in pure Python."
+optional = false
+python-versions = "~=3.5"
+files = [
+    {file = "mistletoe-1.4.0-py3-none-any.whl", hash = "sha256:44a477803861de1237ba22e375c6b617690a31d2902b47279d1f8f7ed498a794"},
+    {file = "mistletoe-1.4.0.tar.gz", hash = "sha256:1630f906e5e4bbe66fdeb4d29d277e2ea515d642bb18a9b49b136361a9818c9d"},
+]
+
+[[package]]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
@@ -1149,4 +1160,4 @@ langchain = ["langchain-core"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.14"
-content-hash = "c037d2de682d78f035780ca79931f8267026d659c48d10bcbacc87cc16b91101"
+content-hash = "939f562e03e07e01ef7d0de0bda236525830c552a443b2a1b7522264a89240ff"
