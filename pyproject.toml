@@ -1,34 +1,27 @@
-[tool.poetry]
+[project]
 name = "promptgit"
 version = "0.2.5"
 description = "Managing prompts for LLM in Git repository"
-authors = ["Boris Tvaroska <boris@tvaroska.sk>"]
-license = "Apache 2.0"
 readme = "README.md"
+requires-python = ">=3.9,<3.14"
+maintainers = [
+  {name = "Boris Tvaroska", email = "boris@tvaroska.sk"}
+]
+dependencies = [
+    "gitpython>=3.0.0,<4.0.0",
+    "mistletoe>=1.4.0,<2.0.0",
+    "pydantic>=2.5.2,<3.0",
+    "pyyaml>=6.0.0",
+    "urllib3>=2.2.2,<3.0.0",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<3.14"
-pydantic = ">=2.5.2,<3.0"
-GitPython = ">=3.0.0,<4.0.0"
-urllib3 = ">=2.2.2,<3.0.0"
-langchain-core = { version = ">=0.3.0,<0.4.0", optional = true }
-pyyaml = ">=6.0.0"
-mistletoe = ">=1.4.0,<2.0.0"
+[project.optional-dependencies]
+langchain = [
+    "langchain-core>=0.3.0,<0.4.0",
+]
 
-[tool.poetry.extras]
-langchain = [ "langchain-core" ]
-
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
-black = "^24.3.0"
-isort = "^5.13.2"
-tox = "^4.11.4"
-pylint = "^3.2.2"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 80
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "tox>=4.27.0",
+]
